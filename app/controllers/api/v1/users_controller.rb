@@ -193,16 +193,18 @@ module Api
       end
       
       private
-      def rand_string(len)
-        o = [('a'..'z')],('A'..'Z')].map{|i| i.to_a}.flatten
-        string = (0..len).map{o[rand(o.length)]}.join
       
+      def rand_string(len)
+        o =  [('a'..'z'),('A'..'Z')].map{|i| i.to_a}.flatten
+        string  =  (0..len).map{ o[rand(o.length)]  }.join
+
         return string
       end
     
-    def user_params
-      params.require(:user).permit(:first_name, :last_name, :email, :password, :password_hash, :password_salt, :verification_code, 
-      :email_verification, :api_authtoken, :authtoken_expiry, :provider, :uid)
+      def user_params
+        params.require(:user).permit(:first_name, :last_name, :email, :password, :password_hash, :password_salt, :verification_code, 
+        :email_verification, :api_authtoken, :authtoken_expiry, :provider, :uid)
+      end
     end
   end
 end
