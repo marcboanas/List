@@ -1,0 +1,9 @@
+<h1><%= possesive(current_user.full_name) + " Lists" %></h1>
+
+<%= will_paginate @user_lists %>
+
+<ul class="user_lists">
+  <%= render partial: "list", collection: @user_lists %>
+</ul>
+
+<%= will_paginate @user_lists %>

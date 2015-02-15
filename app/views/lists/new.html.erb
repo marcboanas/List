@@ -1,0 +1,7 @@
+<% provide(:title, 'Create List') %>
+<h1>Create List</h1>
+
+<%= form_for(@user_list) do |f| %>
+  <%= render 'fields', f: f %> 
+  <%= f.submit "Create list" %>
+<% end %>

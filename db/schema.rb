@@ -11,7 +11,27 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20150209141509) do
+ActiveRecord::Schema.define(version: 20150211161717) do
+
+  create_table "user_list_items", force: true do |t|
+    t.text     "description"
+    t.boolean  "completed"
+    t.datetime "completion_date"
+    t.integer  "user_list_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_list_items", ["user_list_id"], name: "index_user_list_items_on_user_list_id"
+
+  create_table "user_lists", force: true do |t|
+    t.string   "title"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "user_lists", ["user_id"], name: "index_user_lists_on_user_id"
 
   create_table "users", force: true do |t|
     t.string   "first_name"
@@ -20,13 +40,18 @@ ActiveRecord::Schema.define(version: 20150209141509) do
     t.string   "password_hash"
     t.string   "password_salt"
     t.boolean  "email_verification"
-    t.string   "verification_code"
     t.string   "api_authtoken"
     t.datetime "authtoken_expiry"
     t.string   "provider"
     t.string   "uid"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.datetime "verified_at"
+    t.datetime "reset_sent_at"
+    t.string   "reset_digest"
+    t.boolean  "admin"
+    t.string   "remember_digest"
+    t.string   "verification_digest"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true

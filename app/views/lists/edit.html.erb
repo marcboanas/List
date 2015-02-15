@@ -1,0 +1,7 @@
+<% provide(:title, "Edit List") %>
+<h1>Edit List</h1>
+
+<%= form_for @user_list, as: :user_list, url: user_list_path(@user, @user_list), method: :patch do |f| %>
+  <%= render 'fields', f: f %>
+  <%= f.submit "Save changes" %>
+<% end %>

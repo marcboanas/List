@@ -1,0 +1,7 @@
+<div id="<%= 'user-list-#{@user.id}' %>">
+  <ul>
+    <li><%= "Tilte: #{@user_list.title}" %></li>
+    <li><%= link_to "Edit", edit_user_list_path(@user, @user_list) %>
+    <li><%= link_to "Delete", user_list_path(@user, @user_list), method: :delete, data: { confirm: "You sure?" } %>
+  </ul>
+</div>

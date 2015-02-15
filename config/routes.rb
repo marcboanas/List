@@ -1,4 +1,39 @@
+require 'api_constraints'
+
 Rails.application.routes.draw do
+  
+  #Root Path
+  root 'static_pages#home'
+  
+  #Sessions Routes
+  get 'login' => 'sessions#new'
+  post 'login' => 'sessions#create'
+  delete 'logout' => 'sessions#destroy'
+  
+  #Users Routes
+  get 'signup' => 'users#new'
+  resources :users do
+    resources :lists
+  end
+
+  #Account Verifications
+  resources :account_verifications, only: [:edit]
+  
+  #Password Resets
+  resources :passwords_resets, only: [:new, :create, :edit, :update]
+  
+  namespace :api, defaults: {format: 'json'} do
+    scope module: :v1, constaints:ApiConstraints.new(version: 1, default: true) do
+      post 'facebook' => 'users#facebook'
+      post 'signup' => 'users#signup'
+      post 'signin' => 'users#signin'
+      post 'reset_password' => 'users#reset_password'
+      get 'get_token' => 'users#get_token'
+      get 'clear_token' => 'users#clear_token'
+      match "*path", to: "api#page_not_found", via: :all
+    end
+  end
+
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 

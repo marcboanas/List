@@ -1,0 +1,10 @@
+<% provide(:title, @user.full_name) %>
+<h1><%= @user.full_name %></h1>
+
+<% if @user.user_lists.any? %>
+<ul>
+  <% @user.user_lists.each do |list| %>
+    <%= render 'lists/list', list: list %>
+  <% end %>
+</ul>
+<% end %>
