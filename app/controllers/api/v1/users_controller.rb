@@ -1,53 +1,8 @@
 module Api
   module V1
     class UsersController < Api::V1::ApiController
-      http_basic_authenticate_with name: ENV["API_AUTH_NAME"], password: ENV["API_AUTH_PASSWORD"], only: [:facebook, :signup, :signin, :get_token]
-      skip_before_filter :check_for_valid_authtoken, only: [:facebook, :signup, :signin, :get_token]
-      
-      def facebook
-        if request.post?
-          if params[:provider] && params[:uid] && params[:email] && params[:full_name]
-            params[:user] = Hash.new
-            params[:user][:provider] = params[:provider]
-            params[:user][:email] = params[:email]
-            params[:user][:first_name] = params[:full_name].split(" ").first
-            params[:user][:last_name] = params[:full_name].split(" ").last
-            
-            begin
-              decrypted_uid = AESCrypt.decrypt(params[:uid], ENV["API_AUTH_PASSWORD"])
-            rescue Exception => e
-              decrypted_uid = nil
-            end
-            
-            params[:user][:uid] = decrypted_uid
-            params[:user][:verification_code] = rand_string(20)
-            
-            if User.find_or_initialize_by(uid: params[:user][:uid]).update_attributes({
-              first_name: params[:user][:first_name],
-              last_name: params[:user][:last_name],
-              email: params[:user][:email],
-              provider: params[:user][:provider],
-              password: rand_string(20),
-              api_authtoken: rand_string(20),
-              authtoken_expiry: Time.now + (24 * 60 * 60)
-              })
-              render json: user.to_json, status: 200
-            else
-              error_str = ""
-              
-              user.errors.each{|attr, msg|
-                error_str += "#{attr} - #{msg},"
-                }
-              
-              e = Error.new(status: 400, message: error_str)
-              render json: e.to_json, status: 400
-            end
-          else
-            e = Error.new(status: 400, message: "Required parameters are missing")
-            render json: e.to_json, status: 400
-          end
-        end
-      end
+      http_basic_authenticate_with name: ENV["API_AUTH_NAME"], password: ENV["API_AUTH_PASSWORD"], only: [:signup, :signin, :get_token]
+      skip_before_filter :check_for_valid_authtoken, only: [:signup, :signin, :get_token]
          
       def signup
         if request.post?
@@ -91,12 +46,11 @@ module Api
         if request.post?
           if params && params[:email] && params[:password]
             user = User.where(email: params[:email]).first
-            
             if user
               if User.authenticate(true, params[:email], params[:password])
                 if !user.api_authtoken || (user.api_authtoken && user.authtoken_expiry < Time.now)
                   auth_token = rand_string(20)
-                  auth_expiry = time.now + (24*60*60)
+                  auth_expiry = Time.now + (24*60*60)
                   
                   user.update_attributes(api_authtoken: auth_token, authtoken_expiry: auth_expiry)
                 end
